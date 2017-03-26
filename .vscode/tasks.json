@@ -1,0 +1,27 @@
+{
+  "version": "0.1.0",
+  "windows": {
+    "command": "cmd",
+    "args": [
+      "/C"
+    ]
+  },
+  "linux": {
+    "command": "bash",
+    "args": [
+      "-c"
+    ]
+  },
+  "isShellCommand": true,
+  "showOutput": "always",
+  "tasks": [
+    {
+      "taskName": "go run",
+      "suppressTaskName": true,
+      "isBuildCommand": true,
+      "args": [
+        "go install && samantha"
+      ]
+    }
+  ]
+}
