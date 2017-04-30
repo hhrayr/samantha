@@ -11,11 +11,13 @@ import (
 type JsonWriter struct {
 	requestParams  map[string]string
 	requestMethod  string
+	requestUrl     string
 	responseWriter http.ResponseWriter
 }
 
-func newJsonWriter(requestParams map[string]string, w http.ResponseWriter) *JsonWriter {
+func newJsonWriter(requestUrl string, requestParams map[string]string, w http.ResponseWriter) *JsonWriter {
 	return &JsonWriter{
+		requestUrl:     requestUrl,
 		requestParams:  requestParams,
 		responseWriter: w,
 	}
@@ -33,7 +35,7 @@ func (jw *JsonWriter) writeApiMethodInvokeResult() {
 		apiResult, err = apiProvider.InvokeMethod()
 	}
 	if err != nil {
-		NewHttpError(err).WriteToResponse(jw.responseWriter)
+		NewHttpError(err, jw.requestUrl).WriteToResponse(jw.responseWriter)
 	} else {
 		jw.write(apiResult)
 	}
@@ -42,7 +44,7 @@ func (jw *JsonWriter) writeApiMethodInvokeResult() {
 func (jw *JsonWriter) write(data interface{}) {
 	jsonData, err := encodeJSON(data)
 	if err != nil {
-		NewHttpError(err).WriteToResponse(jw.responseWriter)
+		NewHttpError(err, jw.requestUrl).WriteToResponse(jw.responseWriter)
 	} else {
 		jw.responseWriter.Header().Set("Content-Type", "application/json")
 		jw.responseWriter.WriteHeader(http.StatusOK)

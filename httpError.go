@@ -1,12 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
-
-	"fmt"
 
 	"github.com/hhrayr/samantha/api"
 	"github.com/hhrayr/samantha/configs"
@@ -15,11 +13,12 @@ import (
 )
 
 type httpError struct {
+	Details string `json:"details,omitempty"`
 	Message string `json:"message"`
 	Status  int    `json:"status"`
 }
 
-func NewHttpError(err error) httpError {
+func NewHttpError(err error, requestUrl string) httpError {
 	status := http.StatusInternalServerError
 	message := err.Error()
 
@@ -32,7 +31,7 @@ func NewHttpError(err error) httpError {
 		} else if strings.HasPrefix(message, "db.error") {
 			status = http.StatusConflict
 		} else {
-			if configs.GetEnv() != "local" {
+			if configs.GetEnvConfigs().Env != "local" {
 				message = "db.error.generic_error"
 			}
 			status = http.StatusInternalServerError
@@ -44,29 +43,21 @@ func NewHttpError(err error) httpError {
 		break
 	}
 
-	return httpError{
+	res := httpError{
 		Message: message,
 		Status:  status,
 	}
-}
 
-func (he httpError) SetRequestParameters(params map[string]string) {
-	requestParams := bytes.NewBufferString("")
-	for name, value := range params {
-		if requestParams.Len() > 0 {
-			requestParams.WriteString(", ")
-		}
-		requestParams.WriteString(fmt.Sprintf("%s=%s", name, value))
+	if configs.GetEnvConfigs().Env == "local" {
+		res.Details = fmt.Sprintf("%s | %s", requestUrl, message)
 	}
-	he.Message = fmt.Sprintf("%s - request params [%s]", he.Message, requestParams.String())
-}
 
-func (he httpError) SetRequestUrl(url string) {
-	he.Message = fmt.Sprintf("%s - request url [%s]", url)
+	return res
 }
 
 func (he httpError) WriteToResponse(w http.ResponseWriter) {
 	errorJSON, err := json.Marshal(he)
+	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
@@ -74,5 +65,5 @@ func (he httpError) WriteToResponse(w http.ResponseWriter) {
 		w.WriteHeader(he.Status)
 		w.Write(errorJSON)
 	}
-	utils.LogError("http", he.Message)
+	utils.LogError(he.Details, "http")
 }

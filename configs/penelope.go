@@ -25,7 +25,7 @@ func getPenelopeHost(env string) string {
 	if env == "local" {
 		return "http://localhost:8080/"
 	}
-	return "https://autorialto.com/"
+	return "https://google.com/"
 }
 
 var penelopeConfigInstance *PenelopeConfigs
@@ -33,7 +33,7 @@ var penelopeConfigInstanceOnce sync.Once
 
 func GetPenelopeConfigs() *PenelopeConfigs {
 	penelopeConfigInstanceOnce.Do(func() {
-		penelopeConfigInstance = NewPenelopeConfigs(GetEnv())
+		penelopeConfigInstance = NewPenelopeConfigs(GetEnvConfigs().Env)
 	})
 	return penelopeConfigInstance
 }

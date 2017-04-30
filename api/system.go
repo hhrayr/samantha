@@ -97,7 +97,7 @@ func (s *System) userCreate() (*postgresQueries.UserCreateResult, error) {
 		user.FullName, createdUser.ActivationKey, s.params["language"])
 	emailBody, err := emailProvider.GetEmailBody()
 	if err != nil {
-		utils.LogError("email", err.Error())
+		utils.LogError(err.Error(), "email")
 	} else {
 		sendEmail.SedEmail("", []string{user.Email}, emailProvider.GetEmailSubject(), emailBody)
 	}
@@ -131,7 +131,7 @@ func (s *System) userResetPassword() (*postgresQueries.UserResetPasswordResult, 
 		resetPassword.UserFullName, resetPassword.NewPassword, s.params["language"])
 	emailBody, err := emailProvider.GetEmailBody()
 	if err != nil {
-		utils.LogError("email", err.Error())
+		utils.LogError(err.Error(), "email")
 	} else {
 		sendEmail.SedEmail("", []string{resetPassword.UserEmail}, emailProvider.GetEmailSubject(), emailBody)
 	}
@@ -190,7 +190,7 @@ func (s *System) userCreateInvitation() error {
 		s.params["language"])
 	emailBody, err := emailProvider.GetEmailBody()
 	if err != nil {
-		utils.LogError("email", err.Error())
+		utils.LogError(err.Error(), "email")
 	} else {
 		sendEmail.SedEmail("", []string{invitedUser.UserEmail}, emailProvider.GetEmailSubject(), emailBody)
 	}

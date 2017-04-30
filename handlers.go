@@ -9,7 +9,7 @@ import (
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("Welcome to samantha!\nFrom: %s", configs.GetEnv())))
+	w.Write([]byte(fmt.Sprintf("Welcome to samantha!\nFrom: %s", configs.GetEnvConfigs().Env)))
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +18,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func apiHandler(w http.ResponseWriter, r *http.Request) {
-	jw := newJsonWriter(aggregateRequestParams(r), w)
+	jw := newJsonWriter(r.URL.String(), aggregateRequestParams(r), w)
 	jw.setRequestMethod(r.Method)
 	jw.writeApiMethodInvokeResult()
 }

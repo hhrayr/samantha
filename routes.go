@@ -5,37 +5,40 @@ import (
 )
 
 type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+	Method       string
+	Pattern      string
+	NoCache      bool
+	AuthRequired bool
+	HandlerFunc  http.HandlerFunc
 }
 
-type Routes []Route
+type Routes []*Route
 
-var routes = Routes{
-	Route{
-		"Index",
-		"GET",
-		"/",
-		indexHandler,
-	},
-	Route{
-		"Health",
-		"GET",
-		"/health",
-		healthHandler,
-	},
-	Route{
-		"ApiGet",
-		"GET",
-		"/api/{apidomain}/{apimethod}",
-		apiHandler,
-	},
-	Route{
-		"ApiPost",
-		"POST",
-		"/api/{apidomain}/{apimethod}",
-		apiHandler,
-	},
+func getRoutes() Routes {
+	return Routes{
+		&Route{
+			Method:      "GET",
+			Pattern:     "/",
+			HandlerFunc: indexHandler,
+			NoCache:     true,
+		},
+		&Route{
+			Method:      "GET",
+			Pattern:     "/health",
+			HandlerFunc: healthHandler,
+			NoCache:     true,
+		},
+		&Route{
+			Method:      "GET",
+			Pattern:     "/api/{apidomain}/{apimethod}",
+			HandlerFunc: apiHandler,
+			NoCache:     true,
+		},
+		&Route{
+			Method:      "POST",
+			Pattern:     "/api/{apidomain}/{apimethod}",
+			HandlerFunc: apiHandler,
+			NoCache:     true,
+		},
+	}
 }

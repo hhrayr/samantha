@@ -20,18 +20,25 @@ func openFile(name string) (*os.File, error) {
 	return file, nil
 }
 
-func LogAccess(inner http.Handler, name string) http.Handler {
+func LogAccess(inner http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		inner.ServeHTTP(w, r)
 		log.Printf(
-			"%s\t%s\t%s\t%s",
+			"%s\t%s\t%s",
 			r.Method,
 			r.RequestURI,
-			name,
 			time.Since(start),
 		)
 	})
+}
+
+func LogCacheAccess(url string, cacheTimestamp time.Time) {
+	log.Printf(
+		"samantha-cached | %s\t%s",
+		cacheTimestamp,
+		url,
+	)
 }
 
 func LogError(message string, prefix string) {
