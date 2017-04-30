@@ -20,7 +20,7 @@ func NewResetPasswordEmailProvider(fullName, newPassword, language string) *Rese
 }
 
 func (e *ResetPasswordEmailProvider) GetEmailBody() (string, error) {
-	t, err := template.New("reset_password.tmpl").ParseFiles("./i18n/emailTemplates/en/reset_password.tmpl")
+	t, err := template.New("reset_password.tmpl").ParseFiles("./i18n/en/emailTemplates/reset_password.tmpl")
 	if err != nil {
 		return "", err
 	}

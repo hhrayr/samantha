@@ -24,7 +24,7 @@ func NewActivationCodeEmailProvider(fullName, activationKey, language string) *A
 }
 
 func (e *ActivationCodeEmailProvider) GetEmailBody() (string, error) {
-	t, err := template.New("activation.tmpl").ParseFiles("./i18n/emailTemplates/en/activation.tmpl")
+	t, err := template.New("activation.tmpl").ParseFiles("./i18n/en/emailTemplates/activation.tmpl")
 	if err != nil {
 		return "", err
 	}

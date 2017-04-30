@@ -39,7 +39,7 @@ func NewInvitationCodeEmailProvider(
 }
 
 func (e *InvitationCodeEmailProvider) GetEmailBody() (string, error) {
-	t, err := template.New("user_invite.tmpl").ParseFiles("./i18n/emailTemplates/en/user_invite.tmpl")
+	t, err := template.New("user_invite.tmpl").ParseFiles("./i18n/en/emailTemplates/user_invite.tmpl")
 	if err != nil {
 		return "", err
 	}
